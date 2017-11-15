@@ -58,6 +58,16 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $this->composer = $composer;
         $this->io = $io;
+        
+        if (!file_exists($this->getUpdateLockFile())) {
+            $this->io->writeError('<info>Create update lock tmp file: ' . $this->getUpdateLockFile() . '</info>');
+
+            $fp = fopen($this->getUpdateLockFile(), "w");
+            fwrite($fp, time());
+            fclose($fp);
+        }
+
+
     }
 
     /**
@@ -70,24 +80,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             ScriptEvents::POST_AUTOLOAD_DUMP => [
                 ['onPostAutoloadDump', 0],
             ],
-            ScriptEvents::PRE_AUTOLOAD_DUMP => [
-                ['onPreAutoloadDump', 0],
-            ],
         ];
-    }
-
-    /**
-     * This is the main function.
-     * @param Event $event
-     */
-    public function onPreAutoloadDump(Event $event)
-    {
-        $this->io->writeError('<info>Create update lock tmp file: ' . $this->getUpdateLockFile() . '</info>');
-        $this->initAutoload();
-
-        $fp = fopen($this->getUpdateLockFile(), "w");
-        fwrite($fp, time());
-        fclose($fp);
     }
 
     /**
