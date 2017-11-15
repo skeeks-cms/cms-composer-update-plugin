@@ -25,8 +25,6 @@ use Composer\Util\Filesystem;
  */
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
-    const UPDATE_LOCK_TMP_FILE = 'update.lock.tmp';
-
     /**
      * @var string absolute path to the package base directory
      */
@@ -96,7 +94,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public function getUpdateLockFile()
     {
         $dir = $this->getBaseDir();
-        return $dir . "/" . self::UPDATE_LOCK_TMP_FILE;
+        return $dir . "/" . PluginConfig::UPDATE_LOCK_TMP_FILE;
     }
 
     /**
