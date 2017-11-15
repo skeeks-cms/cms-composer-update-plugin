@@ -68,7 +68,34 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             ScriptEvents::POST_AUTOLOAD_DUMP => [
                 ['onPostAutoloadDump', 0],
             ],
+            ScriptEvents::PRE_AUTOLOAD_DUMP => [
+                ['onPreAutoloadDump', 0],
+            ],
         ];
+    }
+
+    /**
+     * This is the main function.
+     * @param Event $event
+     */
+    public function onPreAutoloadDump(Event $event)
+    {
+        $this->io->writeError('<info>Create update lock tmp file: ' . $this->getUpdateLockFile() . '</info>');
+        $this->initAutoload();
+
+        $fp = fopen($this->getUpdateLockFile(), "w");
+        fwrite($fp, time());
+        fclose($fp);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdateLockFile()
+    {
+        $dir = $this->getBaseDir();
+        return $dir . "/update.lock.tmp";
+
     }
 
     /**
@@ -77,8 +104,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public function onPostAutoloadDump(Event $event)
     {
-        $this->io->writeError('<info>After all update</info>');
-        $this->initAutoload();
+        $this->io->writeError('<info>Remove update lock tmp file: ' . $this->getUpdateLockFile() . '</info>');
+        if (file_exists($this->getUpdateLockFile())) {
+            if (!unlink($this->getUpdateLockFile())) {
+                $this->io->writeError("<error>Not removed lock file: " . $this->getUpdateLockFile() . "</error>");
+            }
+        } else {
+            $this->io->writeError("<warning>Not found lock file: " . $this->getUpdateLockFile() . "</warning>");
+        }
     }
 
     protected function initAutoload()
