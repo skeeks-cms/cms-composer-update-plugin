@@ -9,10 +9,9 @@
     ],
     "homepage": "http://cms.skeeks.com/",
 	"type": "composer-plugin",
-	"license": "GPL-3.0+",
+	"license": "BSD-3-Clause",
 	"support": {
         "issues": "https://skeeks.com/",
-        "wiki": "https://cms.skeeks.com/docs/",
         "source": "https://github.com/skeeks-cms/cms-composer-update-plugin"
     },
 	"authors": [
